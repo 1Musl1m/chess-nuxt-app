@@ -1,33 +1,59 @@
 <script setup lang="ts">
-import { TheChessboard, type BoardApi } from 'vue3-chessboard'
-import 'vue3-chessboard/style.css';
-import { Engine } from '@/utils/engine'
+	import { TheChessboard } from "vue3-chessboard";
+	import type { BoardApi, BoardConfig, PieceColor } from "vue3-chessboard";
 
-let boardAPI: BoardApi | undefined
-let engine: Engine | undefined
+	import "vue3-chessboard/style.css";
 
-function handleBoardCreated(boardApi: BoardApi) {
-  boardAPI = boardApi
-  engine = new Engine(boardApi)
-}
+	import { Engine } from "@/utils/engine";
 
-function handleMove() {
-  const history = boardAPI?.getHistory(true)
+	let boardAPI: BoardApi | undefined;
+	let engine: Engine | undefined;
+	const boardConfig: BoardConfig = reactive({
+		coordinates: true,
+	});
 
-  const moves = history?.map((move) =>
-    typeof move === 'object' ? move.lan : move
-  )
+	function handleBoardCreated(boardApi: BoardApi) {
+		boardAPI = boardApi;
+		engine = new Engine(boardApi);
+	}
 
-  if (moves) {
-    engine?.sendPosition(moves.join(' '))
-  }
-}
+	function handleMove() {
+		const history = boardAPI?.getHistory(true);
+
+		const moves = history?.map((move) => (typeof move === "object" ? move.lan : move));
+
+		if (moves) {
+			engine?.sendPosition(moves.join(" "));
+		}
+	}
+
+	function handleCheck(isInCheck: PieceColor) {
+		alert(`${isInCheck} is in Check`);
+	}
+
+	function handleCheckmate(isMated: PieceColor) {
+		alert(`${isMated} is mated`);
+	}
+
+	function handleStalemate() {
+		alert("Stalemate");
+	}
+
+	function handleDraw() {
+		alert("Draw");
+	}
 </script>
 
 <template>
-  <TheChessboard
-    @board-created="handleBoardCreated"
-    @move="handleMove"
-    :player-color="'white'"
-  />
+	<TheChessboard
+		@board-created="handleBoardCreated"
+		:board-config="boardConfig"
+		reactive-config
+		@check="handleCheck"
+		@checkmate="handleCheckmate"
+		@stalemate="handleStalemate"
+		@draw="handleDraw"
+		@move="handleMove"
+		:player-color="'white'"
+	/>
 </template>

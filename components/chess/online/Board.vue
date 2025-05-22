@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { TheChessboard } from "vue3-chessboard";
-	import type { BoardApi, MovePayload } from "vue3-chessboard";
+	import type { BoardApi, BoardConfig, MovePayload, PieceColor } from "vue3-chessboard";
 
 	import "vue3-chessboard/style.css";
 
@@ -14,6 +14,10 @@
 
 	const playerColor = ref<"white" | "black">("white");
 	const boardApi = ref<BoardApi | null>(null);
+
+	const boardConfig: BoardConfig = reactive({
+		coordinates: true,
+	});
 
 	function handleBoardCreated(api: BoardApi) {
 		boardApi.value = api;
@@ -50,15 +54,37 @@
 		console.log("➡️ Вы сделали ход:", move);
 		socket.emit("move", { roomId, move });
 	}
+
+	function handleCheck(isInCheck: PieceColor) {
+		alert(`${isInCheck} is in Check`);
+	}
+
+	function handleCheckmate(isMated: PieceColor) {
+		alert(`${isMated} is mated`);
+	}
+
+	function handleStalemate() {
+		alert("Stalemate");
+	}
+
+	function handleDraw() {
+		alert("Draw");
+	}
 </script>
 
 <template>
 	<div>
-		<p class="mb-4 text-center">Ваш цвет: {{ playerColor === 'white' ? 'белые' : 'чёрные' }}</p>
+		<p class="mb-4 text-center">Ваш цвет: {{ playerColor === "white" ? "белые" : "чёрные" }}</p>
 
 		<div class="flex justify-center">
 			<TheChessboard
 				v-if="playerColor"
+				:board-config="boardConfig"
+				reactive-config
+				@check="handleCheck"
+				@checkmate="handleCheckmate"
+				@stalemate="handleStalemate"
+				@draw="handleDraw"
 				:player-color="playerColor"
 				@board-created="handleBoardCreated"
 				@move="onMove"
