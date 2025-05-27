@@ -1,0 +1,1 @@
+export { default } from "file:///C:/Users/dalga/Desktop/nuxt-chess/chess-nuxt-app/node_modules/@nuxt/vite-builder/dist/runtime/vite-node.mjs"

@@ -1,0 +1,3 @@
+<template>
+  О нас
+</template>
