@@ -49,17 +49,27 @@
 		alert(`${isInCheck === "white" ? "Белые" : "Чёрные"} под шахом!`);
 	}
 
+	function stopTimers() {
+		if (timerInterval.value) {
+			clearInterval(timerInterval.value);
+			timerInterval.value = null;
+		}
+	}
+
 	function handleCheckmate(isMated: PieceColor) {
+		stopTimers();
 		alert(`${isMated === "white" ? "Белые" : "Чёрные"} получили мат! Игра окончена.`);
 		saveGame();
 	}
 
 	function handleStalemate() {
+		stopTimers();
 		alert("Пат! Игра завершена вничью.");
 		saveGame();
 	}
 
 	function handleDraw() {
+		stopTimers();
 		alert("Ничья! Игра завершена.");
 		saveGame();
 	}
@@ -138,7 +148,7 @@
 		isWhiteTurn.value = true;
 		gameStarted.value = false;
 		waitingForOpponent.value = true;
-		if (timerInterval.value) clearInterval(timerInterval.value);
+		stopTimers();
 	}
 
 	// Обработчики Socket.IO
@@ -174,8 +184,8 @@
 		});
 
 		socket.on("playerDisconnected", () => {
+			stopTimers();
 			alert("Соперник отключился");
-			if (timerInterval.value) clearInterval(timerInterval.value);
 			gameStarted.value = false;
 		});
 	});
@@ -194,7 +204,7 @@
 
 	// Завершение игры
 	function endGameByTimeout() {
-		if (timerInterval.value) clearInterval(timerInterval.value);
+		stopTimers();
 		const winner = whiteTime.value <= 0 ? "black" : "white";
 		alert(`Время вышло! ${winner === "white" ? "Белые" : "Чёрные"} побеждают`);
 		saveGame();
